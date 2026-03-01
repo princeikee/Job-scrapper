@@ -1,0 +1,41 @@
+// A small controlled vocabulary gives stable analytics and avoids noisy free-text tags.
+export const SKILL_DICTIONARY = [
+  'JavaScript',
+  'TypeScript',
+  'React',
+  'Node.js',
+  'Express',
+  'Next.js',
+  'Python',
+  'Django',
+  'Flask',
+  'FastAPI',
+  'Java',
+  'Spring',
+  'C#',
+  '.NET',
+  'Go',
+  'Rust',
+  'PHP',
+  'Laravel',
+  'Ruby',
+  'Rails',
+  'PostgreSQL',
+  'MySQL',
+  'MongoDB',
+  'Redis',
+  'Docker',
+  'Kubernetes',
+  'AWS',
+  'GCP',
+  'Azure',
+  'Terraform',
+  'GraphQL',
+  'Tailwind',
+  'HTML',
+  'CSS',
+];
+
+export function normalizeSkillName(skill) {
+  return skill.trim().toLowerCase();
+}
