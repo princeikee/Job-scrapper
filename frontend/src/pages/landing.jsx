@@ -83,7 +83,7 @@ function LandingPage() {
                 Launch App
               </Link>
               <a
-                href="http://localhost:4000/healthz"
+                href="https://job-scrapper-tgle.onrender.com/healthz"
                 target="_blank"
                 rel="noreferrer"
                 className="px-5 py-3 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-colors text-center"
