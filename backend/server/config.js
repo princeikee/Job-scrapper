@@ -10,8 +10,6 @@ const envSchema = z.object({
     .optional()
     .transform((value) => (value ?? 'true').toLowerCase() !== 'false'),
   SCRAPER_TIMEOUT_MS: z.coerce.number().int().positive().default(45000),
-  ADZUNA_APP_ID: z.string().optional(),
-  ADZUNA_APP_KEY: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
