@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   AlertCircle,
   BarChart3,
@@ -20,7 +20,7 @@ import {
   Zap,
 } from 'lucide-react'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'https://job-scrapper-tgle.onrender.com'
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000'
 
 const SECTIONS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -111,6 +111,7 @@ const JobScraperDashboard = () => {
   const [salaryDistribution, setSalaryDistribution] = useState([])
   const [topLocations, setTopLocations] = useState([])
   const [remoteStats, setRemoteStats] = useState({ remote_jobs: 0, onsite_jobs: 0, total_jobs: 0 })
+  const [overview, setOverview] = useState({ total_jobs: 0, source_count: 0, remote_jobs: 0, onsite_jobs: 0 })
   const [systemStatus, setSystemStatus] = useState(null)
 
   const showToast = (title, message) => {
@@ -123,13 +124,14 @@ const JobScraperDashboard = () => {
     setError('')
 
     try {
-      const [jobsRes, recentRes, skillsRes, salaryRes, locationsRes, remoteRes, statusRes] = await Promise.all([
+      const [jobsRes, recentRes, skillsRes, salaryRes, locationsRes, remoteRes, overviewRes, statusRes] = await Promise.all([
         apiGet('/jobs?limit=100'),
         apiGet('/jobs/recent?limit=10'),
         apiGet('/analytics/top-skills'),
         apiGet('/analytics/salary-distribution'),
         apiGet('/analytics/top-locations'),
         apiGet('/analytics/remote-vs-onsite'),
+        apiGet('/analytics/overview'),
         apiGet('/system/status'),
       ])
 
@@ -139,6 +141,7 @@ const JobScraperDashboard = () => {
       setSalaryDistribution(salaryRes.data ?? [])
       setTopLocations(locationsRes.data ?? [])
       setRemoteStats(remoteRes.data ?? { remote_jobs: 0, onsite_jobs: 0, total_jobs: 0 })
+      setOverview(overviewRes.data ?? { total_jobs: 0, source_count: 0, remote_jobs: 0, onsite_jobs: 0 })
       setSystemStatus(statusRes.data ?? null)
     } catch (err) {
       setError(err.message)
@@ -236,9 +239,9 @@ const JobScraperDashboard = () => {
     }
   }
 
-  const totalJobs = jobs.length
-  const activeListings = jobs.length
-  const sourceCount = new Set(jobs.map((j) => j.source).filter(Boolean)).size
+  const totalJobs = overview.total_jobs ?? 0
+  const activeListings = overview.total_jobs ?? 0
+  const sourceCount = overview.source_count ?? 0
 
   const handleSectionSelect = (sectionId) => {
     setActiveSection(sectionId)
@@ -557,7 +560,14 @@ const JobScraperDashboard = () => {
                         {filteredJobs.map((job) => (
                           <tr key={job.id} className="hover:bg-white/5 transition-colors">
                             <td className="px-6 py-4 text-sm font-medium">
-                              <a className="hover:underline" href={job.job_url} target="_blank" rel="noreferrer">{job.title}</a>
+                              <a
+                                className="text-blue-400 underline decoration-blue-400/60 hover:text-blue-300"
+                                href={job.job_url}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {job.title}
+                              </a>
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-300">{job.company || 'N/A'}</td>
                             <td className="px-6 py-4 text-sm text-gray-300">{job.location || 'N/A'}</td>
