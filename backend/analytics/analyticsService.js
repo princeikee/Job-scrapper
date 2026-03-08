@@ -62,3 +62,24 @@ export async function getRemoteVsOnsiteStats() {
   );
   return result.rows[0];
 }
+
+export async function getDashboardOverview() {
+  const result = await pool.query(
+    `
+    SELECT
+      COUNT(*)::int AS total_jobs,
+      COUNT(DISTINCT source_id)::int AS source_count,
+      SUM(CASE WHEN is_remote THEN 1 ELSE 0 END)::int AS remote_jobs,
+      SUM(CASE WHEN NOT is_remote THEN 1 ELSE 0 END)::int AS onsite_jobs
+    FROM jobs
+    `
+  );
+
+  const row = result.rows[0] ?? {};
+  return {
+    total_jobs: row.total_jobs ?? 0,
+    source_count: row.source_count ?? 0,
+    remote_jobs: row.remote_jobs ?? 0,
+    onsite_jobs: row.onsite_jobs ?? 0,
+  };
+}
