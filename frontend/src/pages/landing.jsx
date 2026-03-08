@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Activity,
   BarChart3,
@@ -37,6 +37,7 @@ const features = [
 ]
 
 const techStack = ['Node.js', 'Express', 'PostgreSQL', 'Playwright', 'node-cron', 'REST API']
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000'
 
 function LandingPage() {
   return (
@@ -83,10 +84,10 @@ function LandingPage() {
                 Launch App
               </Link>
               <a
-                href="https://job-scrapper-tgle.onrender.com/healthz"
+                href={`${API_BASE}/healthz`}
                 target="_blank"
                 rel="noreferrer"
-                className="px-5 py-3 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-colors text-center"
+                className="px-5 py-3 rounded-xl border border-blue-400/40 text-blue-300 hover:bg-blue-500/10 transition-colors text-center"
               >
                 Verify Backend Health
               </a>
