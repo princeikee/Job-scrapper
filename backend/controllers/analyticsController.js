@@ -1,5 +1,6 @@
 import { asyncHandler } from '../server/errors.js';
 import {
+  getDashboardOverview,
   getRemoteVsOnsiteStats,
   getSalaryDistribution,
   getTopLocations,
@@ -23,5 +24,10 @@ export const topLocations = asyncHandler(async (_req, res) => {
 
 export const remoteVsOnsite = asyncHandler(async (_req, res) => {
   const data = await getRemoteVsOnsiteStats();
+  res.json({ data });
+});
+
+export const dashboardOverview = asyncHandler(async (_req, res) => {
+  const data = await getDashboardOverview();
   res.json({ data });
 });
