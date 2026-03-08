@@ -404,7 +404,12 @@ const JobScraperDashboard = () => {
                     <StatCard icon={Briefcase} label="Total Jobs Scraped" value={totalJobs.toLocaleString()} hint="Live from /jobs" />
                     <StatCard icon={Clock} label="Active Listings" value={activeListings.toLocaleString()} hint="Current indexed records" />
                     <StatCard icon={Globe} label="Sources Connected" value={sourceCount.toString()} hint="Distinct source names" />
-                    <StatCard icon={Zap} label="Remote Jobs" value={(remoteStats.remote_jobs ?? 0).toLocaleString()} hint={`${remoteStats.total_jobs ?? 0} total`} />
+                    <StatCard
+                      icon={Zap}
+                      label="Remote Jobs"
+                      value={(overview.remote_jobs ?? 0).toLocaleString()}
+                      hint={`${overview.total_jobs ?? 0} total`}
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
