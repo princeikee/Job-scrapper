@@ -1,7 +1,7 @@
 import { scrapeRemoteOkJobs } from '../scrapers/remoteOkScraper.js';
 import { scrapeRemotiveJobs } from '../scrapers/remotiveScraper.js';
 import { scrapeArbeitnowJobs } from '../scrapers/arbeitnowScraper.js';
-import { canUseAdzunaNigeria, scrapeAdzunaNigeriaJobs } from '../scrapers/adzunaNgScraper.js';
+import { scrapeJobbermanJobs } from '../scrapers/jobbermanScraper.js';
 import { logger } from '../server/logger.js';
 import { getOrCreateSource } from './sourceService.js';
 import { upsertJobsFromSource } from './jobService.js';
@@ -45,10 +45,9 @@ export async function runScraperNow(trigger = 'manual') {
         scrape: scrapeArbeitnowJobs,
       },
       {
-        name: 'Adzuna Nigeria',
-        baseUrl: 'https://www.adzuna.com',
-        enabled: canUseAdzunaNigeria,
-        scrape: scrapeAdzunaNigeriaJobs,
+        name: 'Jobberman',
+        baseUrl: 'https://www.jobberman.com',
+        scrape: scrapeJobbermanJobs,
       },
     ];
 
@@ -58,18 +57,6 @@ export async function runScraperNow(trigger = 'manual') {
     let updated = 0;
 
     for (const scraperRun of scraperRuns) {
-      if (typeof scraperRun.enabled === 'function' && !scraperRun.enabled()) {
-        breakdown.push({
-          source: scraperRun.name,
-          jobsFound: 0,
-          inserted: 0,
-          updated: 0,
-          status: 'skipped',
-          error: 'Source credentials are not configured',
-        });
-        continue;
-      }
-
       const source = await getOrCreateSource({
         name: scraperRun.name,
         baseUrl: scraperRun.baseUrl,
@@ -122,7 +109,7 @@ export async function runScraperNow(trigger = 'manual') {
       }
     }
 
-    if (breakdown.every((item) => item.status === 'failed' || item.status === 'skipped')) {
+    if (breakdown.every((item) => item.status === 'failed')) {
       throw new AppError('All scraper sources failed', 502);
     }
 
