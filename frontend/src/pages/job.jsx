@@ -20,7 +20,7 @@ import {
   Zap,
 } from 'lucide-react'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4000'
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'https://job-scrapper-tgle.onrender.com'
 
 const SECTIONS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
