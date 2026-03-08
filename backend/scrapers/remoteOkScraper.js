@@ -5,7 +5,6 @@ import { logger } from '../server/logger.js';
 const SOURCE_NAME = 'RemoteOK';
 const SOURCE_URL = 'https://remoteok.com/remote-dev-jobs';
 const SOURCE_API_URL = 'https://remoteok.com/api';
-const ALT_API_URL = 'https://remotive.com/api/remote-jobs';
 
 function textOrNull(value) {
   if (!value) return null;
@@ -134,37 +133,6 @@ async function scrapeRemoteOkViaApi() {
     .filter((job) => job.title && job.jobUrl);
 }
 
-async function scrapeAlternateApiFallback() {
-  const response = await fetch(ALT_API_URL, {
-    headers: {
-      Accept: 'application/json',
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Alternate API request failed (${response.status})`);
-  }
-
-  const payload = await response.json();
-  const jobs = Array.isArray(payload?.jobs) ? payload.jobs : [];
-
-  return jobs
-    .slice(0, 120)
-    .map((item) => ({
-      title: textOrNull(item.title),
-      company: textOrNull(item.company_name),
-      location: textOrNull(item.candidate_required_location || 'Remote'),
-      salary: textOrNull(item.salary),
-      skills: Array.isArray(item.tags) ? item.tags.filter(Boolean) : [],
-      description: textOrNull(item.description),
-      jobUrl: textOrNull(item.url),
-      source: SOURCE_NAME,
-    }))
-    .filter((job) => job.title && job.jobUrl);
-}
-
 // Playwright is primary; API fallback keeps production scraping resilient
 // in environments where anti-bot pages change DOM rendering.
 export async function scrapeRemoteOkJobs() {
@@ -181,14 +149,12 @@ export async function scrapeRemoteOkJobs() {
   try {
     const fallbackJobs = await scrapeRemoteOkViaApi();
     logger.info({ count: fallbackJobs.length }, 'RemoteOK API fallback completed');
-    if (fallbackJobs.length > 0) return fallbackJobs;
+    return fallbackJobs;
   } catch (error) {
-    logger.warn({ err: error }, 'RemoteOK API fallback failed; trying alternate feed');
+    logger.warn({ err: error }, 'RemoteOK API fallback failed');
   }
 
-  const altJobs = await scrapeAlternateApiFallback();
-  logger.info({ count: altJobs.length }, 'Alternate API fallback completed');
-  return altJobs;
+  return [];
 }
 
 export const REMOTE_OK_SOURCE = {
