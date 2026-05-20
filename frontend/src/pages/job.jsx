@@ -692,9 +692,6 @@ const JobScraperDashboard = () => {
                     <div className="flex justify-between"><span>Scraper Running</span><span className="mono">{systemStatus?.scraper?.scrapeRunning ? 'YES' : 'NO'}</span></div>
                     <div className="flex justify-between"><span>Last Runtime Start</span><span className="mono">{formatDateTime(systemStatus?.scraper?.lastRunAt)}</span></div>
                   </div>
-                  <div className="mt-6 text-xs text-gray-500">
-                    To point this frontend to another environment, set VITE_API_BASE_URL in frontend .env.
-                  </div>
                 </div>
               )}
 
